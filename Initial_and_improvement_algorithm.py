@@ -29,7 +29,10 @@ def main(candidate_facility_number, point_amount, open_p_num_of_facs):
         if max_val < total_distance:
             max_val = total_distance
     min_value = max_val + 1
-
+    
+""" Initialize variables to track distances.
+Calculate the maximum total distance for any facility to all points.
+Open the specified number of facilities based on the minimum total distance to all points. """
     for _ in range(open_p_num_of_facs):
         for y in range(len(facs)):
             total_distance = sum(distance_matrix[y])
@@ -49,7 +52,8 @@ def main(candidate_facility_number, point_amount, open_p_num_of_facs):
                 min_dist = dist
                 nearest_facility = facility
         point.assigned_facility_id = nearest_facility.id
-
+        
+""" Assign each point to the nearest opened facility. """
     def reassign_points(points, opened_facilities):
         for point in points:
             min_dist = float('inf')
@@ -67,7 +71,11 @@ def main(candidate_facility_number, point_amount, open_p_num_of_facs):
 
     iterative_reassignment(points, opened_facilities)
     return opened_facilities, unopened_facilities, points
-
+    
+""" After the initial assignment, it attempts to improve the solution by swapping currently opened facilities with unopened ones.
+    The swap_facilities function tries all possible swaps and keeps the best configuration that minimizes the total distance.
+    The calculate_total_distance function calculates the sum of the minimum distances from all points to their nearest facility.
+    It reassigns points iteratively after finding a better set of opened facilities through swapping."""
 def improvement_algorithm(candidate_facility_number, point_amount, open_p_num_of_facs):
     operator = Operators()
 
@@ -129,7 +137,10 @@ def improvement_algorithm(candidate_facility_number, point_amount, open_p_num_of
             reassign_points(points, opened_facilities)
 
     iterative_reassignment(points, opened_facilities)
-
+    
+""" Calculate the total distance for the current configuration.
+    Try swapping each opened facility with each unopened facility.
+    Keep the configuration with the lowest total distance. """
     def swap_facilities(opened_facilities, unopened_facilities, points):
         best_total_distance = calculate_total_distance(opened_facilities, points)
         best_opened_facilities = opened_facilities.copy()
@@ -156,11 +167,16 @@ def improvement_algorithm(candidate_facility_number, point_amount, open_p_num_of
                     min_dist = dist
             total_distance += min_dist
         return total_distance
-
+        
+""" After swapping facilities to minimize the total distance, perform iterative reassignment.
+    Return the lists of the best opened facilities, unopened facilities, and points. """
     best_opened_facilities = swap_facilities(opened_facilities, unopened_facilities, points)
     iterative_reassignment(points, best_opened_facilities)
     return best_opened_facilities, unopened_facilities, points
-
+    
+""" Define different problem sizes with varying numbers of customers, candidate facilities, and k values. 
+    For each problem size, run the main algorithm and measure the execution time.
+    Store the execution times in a list. """
 def measure_execution_time():
     problem_sizes = [
         (20, 5, 3),
